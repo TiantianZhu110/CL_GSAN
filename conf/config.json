@@ -1,0 +1,114 @@
+{
+    "trainer": {
+        "cuda_device": [
+            0
+        ],
+        "grad_norm": 5,
+        "no_grad": [
+            ".*contrastive_encoder.*"
+        ],
+        "num_epochs": 100,
+        "num_serialized_models_to_keep": 3,
+        "optimizer": {
+            "lr": 0.001,
+            "type": "adam"
+        },
+        "patience": 500,
+        "validation_metric": "+f1"
+    },
+    "dataset_reader": {
+        "token_indexers": {
+            "bert": {
+                "pretrained_model": "pretrain/bert-base-chinese-vocab.txt",
+                "type": "bert-pretrained"
+            },
+            "tokens": {
+                "lowercase_tokens": true,
+                "type": "single_id"
+            }
+        },
+        "type": "tg-san-reader"
+    },
+    "validation_data_path": "../data/negoation.dev.v7",
+    "train_data_path": "../data/negoation.train.v7",
+    "vocabulary": {
+        "directory_path": "ckpt_v7_tgsan_bert/vocabulary"
+    },
+    "model": {
+        "contrastive_encoder": {
+            "bidirectional": true,
+            "dropout": 0,
+            "hidden_size": 100,
+            "input_size": 768,
+            "num_layers": 1,
+            "type": "gru"
+        },
+        "d_wt": 50,
+        "dropout": 0.5,
+        "encoder": {
+            "bidirectional": true,
+            "dropout": 0,
+            "hidden_size": 100,
+            "input_size": 768,
+            "num_layers": 1,
+            "type": "gru"
+        },
+        "feedforward": {
+            "activations": [
+                "linear",
+                "linear"
+            ],
+            "dropout": [
+                0,
+                0
+            ],
+            "hidden_dims": [
+                200,
+                200
+            ],
+            "input_dim": 200,
+            "num_layers": 2
+        },
+        "initializer": [
+            [
+                ".*relation_embedding.*|.*Wt_.*|.*Wc.*|.*Wm.*|.*wm_.*|.*U_context.*|.*REL_context.*",
+                {
+                    "type": "xavier_normal"
+                }
+            ]
+        ],
+        "is_contrastive": false,
+        "r": 5,
+        "regularizer": [
+            [
+                "scalar_parameters",
+                {
+                    "alpha": 0.1,
+                    "type": "l2"
+                }
+            ]
+        ],
+        "relation_embedding_size": 30,
+        "text_field_embedder": {
+            "allow_unmatched_keys": true,
+            "embedder_to_indexer_map": {
+                "bert": [
+                    "bert",
+                    "bert-offsets"
+                ]
+            },
+            "token_embedders": {
+                "bert": {
+                    "pretrained_model": "pretrain/bert-base-chinese.tar.gz",
+                    "requires_grad": false,
+                    "type": "bert-pretrained"
+                }
+            }
+        },
+        "type": "tg-san-model"
+    },
+    "iterator": {
+        "batch_size": 32,
+        "type": "basic"
+    }
+}
